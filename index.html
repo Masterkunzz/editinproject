@@ -625,7 +625,7 @@ const playlist = [
                 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
                 path = `artifacts/${appId}/users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
             } else {
-                path = `users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
+                path = `Data_Orderan/orders_${loggedInUser.username}`;
             }
 
             const colRef = collection(db, path);
@@ -675,7 +675,7 @@ const playlist = [
                     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
                     path = `artifacts/${appId}/users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
                 } else {
-                    path = `users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
+                    path = `Data_Orderan/orders_${loggedInUser.username}`;
                 }
                 
                 await addDoc(collection(db, path), newOrder);
@@ -701,7 +701,7 @@ const playlist = [
                     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
                     path = `artifacts/${appId}/users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
                 } else {
-                    path = `users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
+                    path = `Data_Orderan/orders_${loggedInUser.username}`;
                 }
                 
                 const docRef = doc(db, path, id);
@@ -722,7 +722,7 @@ const playlist = [
                     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
                     path = `artifacts/${appId}/users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
                 } else {
-                    path = `users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
+                    path = `Data_Orderan/orders_${loggedInUser.username}`;
                 }
                 
                 const docRef = doc(db, path, id);
