@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Editin Bang!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Animasi Running Text & Dropdown Topbar */
+        .topbar-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            z-index: 100;
+            background: rgba(17, 24, 39, 0.95);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+
+        .marquee-container {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            color: #f3f4f6;
+            display: flex;
+            align-items: center;
+        }
+
+        .marquee-content {
+            display: inline-block;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            /* Animasi akan diinjeksi via JavaScript */
+        }
+        
+        .marquee-container:hover .marquee-content {
+            animation-play-state: paused !important; /* Berhenti kalau di-hover */
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(100vw); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Dropdown Reminder */
+        .reminder-dropdown {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(17, 24, 39, 0.98);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: translateY(-100%); /* Tersembunyi di atas by default */
+            font-weight: bold;
+            color: white;
+            z-index: 101;
+        }
+        
+        /* Padding body agar tidak tertutup topbar */
+        body {
+            padding-top: 40px; 
+        }
+
+        /* Music Button Pulse & Slider */
+        .music-playing {
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+        }
+
+        /* Styling untuk container volume */
+        .volume-container {
+            position: fixed;
+            bottom: 90px;
+            right: 28px;
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(5px);
+            padding: 15px 8px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: opacity 0.3s, transform 0.3s;
+            opacity: 0;
+            transform: translateY(10px);
+            pointer-events: none;
+            z-index: 49;
+            height: 100px;
+        }
+
+        .volume-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Style untuk Vertical Range Input */
+        input[type=range][orient=vertical] {
+            appearance: slider-vertical;
+            width: 8px;
+            height: 100%;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen text-gray-800 font-sans antialiased">
+
+    <!-- Topbar Orchestrator (Quotes, Sholat, Ngopi) -->
+    <div class="topbar-wrapper">
+<!-- 1. Running Text (Marquee) -->
+        <div id="marquee-container" class="marquee-container">
+            <div class="marquee-content" id="marquee-text">
+                🎬 "Editing itu seni kasat mata. Kalau penonton nyadar ada editan, berarti itu buruk." — Walter Murch &nbsp;&nbsp; | &nbsp;&nbsp; 
+                ✂️ "Inti dari sebuah karya sinema adalah proses editing." — Francis Ford Coppola &nbsp;&nbsp; | &nbsp;&nbsp; 
+                ⏳ "Film dibuat tiga kali: saat ditulis naskahnya, saat direkam, dan saat diedit." — Robert Bresson &nbsp;&nbsp; | &nbsp;&nbsp; 
+                🎥 "Editing itu ibarat menari. Kamu harus bisa nemuin ritme dari videonya." — Thelma Schoonmaker &nbsp;&nbsp; | &nbsp;&nbsp; 
+                🎞️ "Editor yang hebat sejatinya adalah seorang pendongeng." — Michael Kahn &nbsp;&nbsp; | &nbsp;&nbsp; 
+                🖥️ "Render lama? Sabar, karya bagus butuh waktu dan dedikasi." — Editin Bang Team
+            </div>
+        </div>
+
+        <!-- 2. Dropdown Reminders (Sholat / Ngopi) -->
+        <div id="reminder-dropdown" class="reminder-dropdown">
+            <span id="reminder-text"></span>
+        </div>
+    </div>
+
+    <!-- Notifikasi UI -->
+    <div id="toast" class="fixed top-16 right-4 hidden px-6 py-3 rounded-lg shadow-xl z-50 transition-opacity duration-300 font-medium"></div>
+
+    <!-- Music Player System -->
+    <!-- Volume Slider (Vertical) -->
+    <div id="volume-container" class="volume-container">
+        <input type="range" id="volume-slider" orient="vertical" min="0" max="100" value="50">
+    </div>
+
+    <!-- Music Button -->
+    <button id="music-btn" class="fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-2xl flex items-center justify-center text-xl z-50 transition-all hover:bg-indigo-700" title="Radio Editin Bang">
+        <i id="music-icon" class="fas fa-volume-mute"></i>
+    </button>
+
+    <!-- Halaman Login -->
+    <div id="login-screen" class="flex items-center justify-center min-h-[calc(100vh-40px)] p-4">
+        <div class="glass p-8 rounded-2xl shadow-2xl w-full max-w-md">
+            <div class="text-center mb-8">
+                <!-- LOGO EDITIN BANG DI LOGIN -->
+                <img src="logo.png" alt="Logo Editin Bang" class="w-40 h-auto mx-auto mb-4 object-contain" onerror="this.onerror=null; this.src='https://via.placeholder.com/150?text=Editin+Bang';">
+                
+                <h1 class="text-2xl font-bold text-gray-900 mt-2">Workspace Editor</h1>
+                <p class="text-gray-500 mt-1">Sistem Manajemen Orderan</p>
+            </div>
+            
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                    <input type="text" id="username" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" placeholder="Masukkan Username" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="password" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" placeholder="Masukkan Password" required>
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition shadow-lg hover:shadow-xl">
+                    Masuk
+                </button>
+            </form>
+            <p id="login-error" class="text-red-500 text-sm text-center mt-4 hidden">Username atau password salah!</p>
+        </div>
+    </div>
+
+    <!-- Halaman Dashboard -->
+    <div id="dashboard-screen" class="hidden p-4 md:p-8 max-w-7xl mx-auto min-h-[calc(100vh-40px)] flex flex-col">
+        
+        <!-- Header Dashboard -->
+        <div class="glass rounded-2xl p-6 mb-8 flex flex-col md:flex-row justify-between items-center shadow-lg border-l-4 border-l-indigo-600">
+            <div class="flex items-center gap-6">
+                <!-- LOGO KECIL DI DASHBOARD -->
+                <img src="logo.png" alt="Logo Editin Bang" class="w-20 h-auto hidden md:block" onerror="this.style.display='none'">
+                <div>
+                    <h2 id="greeting-text" class="text-2xl md:text-3xl font-bold text-gray-900">Selamat pagi, Ahmad.</h2>
+                    <p class="text-gray-600">Udah siap kerjain pesanan?</p>
+                </div>
+            </div>
+            <div class="mt-4 md:mt-0">
+                <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-medium transition shadow-md flex items-center gap-2">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- Form Input Order -->
+            <div class="lg:col-span-1">
+                <div class="glass rounded-2xl p-6 shadow-lg sticky top-16">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <i class="fas fa-plus-circle text-indigo-500"></i> Pesanan Baru
+                    </h3>
+                    <form id="order-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Klien</label>
+                            <input type="text" id="klien" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Judul Projek</label>
+                            <input type="text" id="projek" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                            <select id="kategori" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                                <option value="Shorts Gaming">Shorts Gaming</option>
+                                <option value="Video Panjang">Video Panjang</option>
+                                <option value="Cinematic Vlog">Cinematic Vlog</option>
+                                <option value="Tiktok Ads">Tiktok Ads</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Link Brief</label>
+                            <input type="url" id="link" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white" placeholder="https://..." required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Deadline</label>
+                            <input type="date" id="deadline" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white" required>
+                        </div>
+                        <button type="submit" id="submit-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg transition shadow-md flex justify-center items-center gap-2 disabled:opacity-50">
+                            <i class="fas fa-save"></i> Simpan Pesanan
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tabel Order -->
+            <div class="lg:col-span-3">
+                <div class="glass rounded-2xl shadow-lg overflow-hidden flex flex-col h-full">
+                    <div class="p-4 border-b border-gray-200 bg-white bg-opacity-50 flex justify-between items-center">
+                        <h3 class="text-lg font-bold text-gray-800">Daftar Antrean</h3>
+                        <div class="text-sm text-gray-500" id="loading-indicator">
+                            <i class="fas fa-spinner fa-spin text-indigo-500"></i> Sinkronisasi Data...
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto flex-1">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 text-sm">
+                                    <th class="p-4 font-semibold">Klien / Projek</th>
+                                    <th class="p-4 font-semibold">Brief</th>
+                                    <th class="p-4 font-semibold">Deadline & Sisa</th>
+                                    <th class="p-4 font-semibold">Status</th>
+                                    <th class="p-4 font-semibold">Prioritas</th>
+                                    <th class="p-4 font-semibold text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body" class="bg-white bg-opacity-80">
+                                <!-- Data akan dirender di sini -->
+                            </tbody>
+                        </table>
+                        <div id="empty-state" class="hidden p-8 text-center text-gray-500">
+                            <i class="fas fa-box-open text-4xl mb-3 text-gray-300"></i>
+                            <p>Belum ada orderan. Santai dulu!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE SETUP & LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+        // ==========================================
+        // 🚨 AREA SETTING FIREBASE (UNTUK NETLIFY NANTI)
+        // ==========================================
+        // Ganti config ini saat deploy ke Netlify
+        const userFirebaseConfig = {
+            apiKey: "API_KEY_KAMU",
+            authDomain: "PROJECT_KAMU.firebaseapp.com",
+            projectId: "PROJECT_KAMU",
+            storageBucket: "PROJECT_KAMU.appspot.com",
+            messagingSenderId: "SENDER_ID",
+            appId: "APP_ID"
+        };
+        // ==========================================
+
+        let app, db, auth;
+        const useCanvasConfig = typeof __firebase_config !== 'undefined';
+
+        if (useCanvasConfig) {
+            app = initializeApp(JSON.parse(__firebase_config));
+        } else {
+            app = initializeApp(userFirebaseConfig); 
+        }
+        
+        db = getFirestore(app);
+        auth = getAuth(app);
+
+        // State Aplikasi
+        let orders = [];
+        let loggedInUser = null;
+        let unsubscribeDb = null;
+        let isFirebaseReady = false;
+
+        // Akun Editor
+        const accounts = {
+            'AhmadBafagih': { pass: 'AhmadCEO89', name: 'Ahmad' },
+            'EditorSatu': { pass: 'AhmadCEO89', name: 'Villa' },
+            'EditorDua': { pass: 'AhmadCEO89', name: 'Ali' }
+        };
+
+        // UI Elements
+        const loginScreen = document.getElementById('login-screen');
+        const dashboardScreen = document.getElementById('dashboard-screen');
+        const loginForm = document.getElementById('login-form');
+        const orderForm = document.getElementById('order-form');
+        const tableBody = document.getElementById('table-body');
+        const emptyState = document.getElementById('empty-state');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const toast = document.getElementById('toast');
+
+        // Fungsi Toast Notification
+        window.showToast = (message, type = 'success') => {
+            toast.textContent = message;
+            toast.className = `fixed top-16 right-4 px-6 py-3 rounded-lg shadow-xl z-50 transition-opacity duration-300 font-medium text-white ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}`;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        };
+
+        // ==========================================
+        // LOGIKA ANIMASI TOPBAR (QUOTES -> SHOLAT -> NGOPI)
+        // ==========================================
+        const marqueeContent = document.getElementById('marquee-text');
+        const marqueeContainer = document.getElementById('marquee-container');
+        const reminderDropdown = document.getElementById('reminder-dropdown');
+        const reminderText = document.getElementById('reminder-text');
+
+        function playTopbarSequence() {
+            // 1. Jalankan Marquee Quotes
+            marqueeContainer.style.opacity = '1';
+            marqueeContent.style.animation = 'none';
+            void marqueeContent.offsetWidth; // Trigger reflow agar animasi bisa direstart
+            
+            // Atur durasi 45 detik untuk running text
+            marqueeContent.style.animation = 'marquee 45s linear forwards';
+
+            // Event listener saat teks selesai berjalan sampai ujung
+            marqueeContent.onanimationend = () => {
+                
+                // Sembunyikan container marquee sebentar
+                marqueeContainer.style.opacity = '0';
+
+                // 2. Tampilkan Dropdown Sholat
+                reminderText.innerHTML = '🕌 <span class="text-yellow-300">PENGINGAT: JANGAN LUPA SHOLAT! sholat lebih utama dari orderan!</span>';
+                reminderDropdown.style.transform = 'translateY(0)'; // Turun dari atas
+
+                setTimeout(() => {
+                    // Tarik Dropdown Sholat Ke Atas
+                    reminderDropdown.style.transform = 'translateY(-100%)';
+
+                    setTimeout(() => {
+                        // 3. Tampilkan Dropdown Ngopi
+                        reminderText.innerHTML = '☕ <span class="text-orange-300">jangan lupa ngopi biar enjoyyy.</span>';
+                        reminderDropdown.style.transform = 'translateY(0)'; // Turun dari atas
+
+                        setTimeout(() => {
+                            // Tarik Dropdown Ngopi Ke Atas
+                            reminderDropdown.style.transform = 'translateY(-100%)';
+
+                            setTimeout(() => {
+                                // LOOPING: Mulai ulang urutan dari awal (Quotes berjalan lagi)
+                                playTopbarSequence();
+                            }, 600); // Waktu tunggu animasi naik selesai
+                        }, 5000); // Durasi ngopi tampil (5 detik)
+                    }, 600); // Waktu tunggu animasi naik selesai
+                }, 5000); // Durasi sholat tampil (5 detik)
+            };
+        }
+
+        // Mulai sequence saat halaman dimuat
+        playTopbarSequence();
+        // ==========================================
+
+
+        // ==========================================
+        // LOGIKA RADIO (BACKGROUND MUSIC SYSTEM)
+        // ==========================================
+        const musicBtn = document.getElementById('music-btn');
+        const musicIcon = document.getElementById('music-icon');
+        const volumeContainer = document.getElementById('volume-container');
+        const volumeSlider = document.getElementById('volume-slider');
+        
+        let currentAudio = null;
+        let isAudible = false; // Status apakah suara terdengar oleh user
+        let userVolume = 0.5; // Menyimpan preferensi volume user (default 50%)
+        let fadeInterval;
+
+        const playlist = [
+            'music/track1.mp3',
+            'music/track2.mp3',
+            'music/track3.mp3'
+        ];
+
+        // Mulai Radio secara Bisu (Mute)
+        function startRadioSilently() {
+            if (currentAudio) return;
+
+            const randomTrack = playlist[Math.floor(Math.random() * playlist.length)];
+            currentAudio = new Audio(randomTrack);
+            currentAudio.volume = 0; // Selalu mulai dengan volume 0 (mute)
+            
+            // Ketika lagu selesai, putar lagu acak lainnya
+            currentAudio.addEventListener('ended', () => {
+                currentAudio = null;
+                startRadioSilently(); // Lanjut lagu berikutnya (tetap mengikuti status isAudible)
+                if (isAudible && currentAudio) {
+                    currentAudio.volume = userVolume; // Terapkan volume jika mode suara aktif
+                }
+            });
+
+            // Playback sering kali diblokir browser jika tidak ada interaksi user,
+            // jadi kita coba play, jika error biarkan saja (akan diputar saat user klik tombol)
+            currentAudio.play().catch(e => console.log("Auto-play diblokir browser, menunggu interaksi user."));
+        }
+
+        // Jalankan radio saat dokumen siap
+        document.addEventListener('DOMContentLoaded', startRadioSilently);
+
+        // Logika Fade In/Out
+        function fadeVolume(targetVolume, duration) {
+            clearInterval(fadeInterval);
+            const steps = 20;
+            const stepTime = duration / steps;
+            if(!currentAudio) return;
+            
+            const stepVolume = (targetVolume - currentAudio.volume) / steps;
+
+            fadeInterval = setInterval(() => {
+                let newVol = currentAudio.volume + stepVolume;
+                // Pastikan volume dalam batas 0 - 1
+                if (newVol < 0) newVol = 0;
+                if (newVol > 1) newVol = 1;
+                
+                currentAudio.volume = newVol;
+
+                if ((stepVolume > 0 && currentAudio.volume >= targetVolume) || 
+                    (stepVolume < 0 && currentAudio.volume <= targetVolume)) {
+                    clearInterval(fadeInterval);
+                    currentAudio.volume = targetVolume; // Setel ke target pasti
+                }
+            }, stepTime);
+        }
+
+        // Interaksi Tombol Speaker
+        musicBtn.addEventListener('click', () => {
+            // Jika browser memblokir autoplay sebelumnya, mulai audio sekarang
+            if (!currentAudio || currentAudio.paused) {
+                 if(!currentAudio) startRadioSilently();
+                 currentAudio.play().catch(handleAudioError);
+            }
+
+            if (isAudible) {
+                // Mode ke Mute (Fade Out)
+                isAudible = false;
+                musicIcon.className = 'fas fa-volume-mute';
+                musicBtn.classList.remove('music-playing');
+                volumeContainer.classList.remove('visible');
+                fadeVolume(0, 500); // Fade out 0.5 detik
+            } else {
+                // Mode Bersuara (Fade In)
+                isAudible = true;
+                musicIcon.className = 'fas fa-volume-up';
+                musicBtn.classList.add('music-playing');
+                volumeContainer.classList.add('visible');
+                // Setel slider ke preferensi user
+                volumeSlider.value = userVolume * 100;
+                fadeVolume(userVolume, 800); // Fade in 0.8 detik
+            }
+        });
+
+        // Interaksi Slider Volume
+        volumeSlider.addEventListener('input', (e) => {
+            const val = e.target.value / 100;
+            userVolume = val; // Simpan preferensi
+            if (isAudible && currentAudio) {
+                clearInterval(fadeInterval); // Hentikan fade jika sedang berjalan
+                currentAudio.volume = userVolume;
+            }
+            
+            // Ubah ikon berdasarkan volume
+            if (val === 0) {
+                musicIcon.className = 'fas fa-volume-off';
+            } else if (val < 0.5) {
+                musicIcon.className = 'fas fa-volume-down';
+            } else {
+                musicIcon.className = 'fas fa-volume-up';
+            }
+        });
+
+        function handleAudioError(e) {
+            console.error("Audio Playback Error:", e);
+            showToast("Radio gagal memutar. Pastikan file music/track.mp3 tersedia.", "error");
+            isAudible = false;
+            musicIcon.className = 'fas fa-volume-mute';
+            musicBtn.classList.remove('music-playing');
+            volumeContainer.classList.remove('visible');
+        }
+        // ==========================================
+
+
+        // Init Firebase Auth (Wajib untuk database)
+        const initFirebaseAuth = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Auth Error:", error);
+                showToast("Koneksi Firebase gagal. Cek konfigurasi.", "error");
+            }
+        };
+
+        initFirebaseAuth();
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                isFirebaseReady = true;
+                if (loggedInUser) loadDataFromFirebase();
+            }
+        });
+
+        // Waktu & Sapaan
+        const updateGreeting = (name) => {
+            const hour = new Date().getHours();
+            let timeOfDay = 'malam';
+            if (hour >= 4 && hour < 11) timeOfDay = 'pagi';
+            else if (hour >= 11 && hour < 15) timeOfDay = 'siang';
+            else if (hour >= 15 && hour < 18) timeOfDay = 'sore';
+            
+            document.getElementById('greeting-text').textContent = `Selamat ${timeOfDay}, ${name}.`;
+        };
+
+        // Login Logic
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const userVal = document.getElementById('username').value.trim();
+            const passVal = document.getElementById('password').value.trim();
+            const errorMsg = document.getElementById('login-error');
+
+            // Coba nyalakan audio silent jika diblokir browser saat load awal
+            if(currentAudio && currentAudio.paused) {
+                currentAudio.play().catch(e => console.log("Audio still blocked"));
+            }
+
+            if (accounts[userVal] && accounts[userVal].pass === passVal) {
+                loggedInUser = { username: userVal, name: accounts[userVal].name };
+                loginScreen.classList.add('hidden');
+                dashboardScreen.classList.remove('hidden');
+                updateGreeting(loggedInUser.name);
+                
+                if (isFirebaseReady) {
+                    loadDataFromFirebase();
+                } else {
+                    loadingIndicator.innerHTML = '<i class="fas fa-spinner fa-spin text-indigo-500"></i> Menghubungkan ke Database...';
+                }
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
+        });
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            loggedInUser = null;
+            if (unsubscribeDb) unsubscribeDb();
+            orders = [];
+            dashboardScreen.classList.add('hidden');
+            loginScreen.classList.remove('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        });
+
+        // Helper: Hitung Hari & Prioritas
+        const calculateStats = (deadline, status) => {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const dlDate = new Date(deadline);
+            dlDate.setHours(0, 0, 0, 0);
+            
+            const diffTime = dlDate - today;
+            const sisaHari = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            let prioritas = 'NORMAL';
+            if (status === 'Selesai') prioritas = 'AMAN';
+            else if (sisaHari < 0) prioritas = 'TERLAMBAT';
+            else if (sisaHari <= 2) prioritas = 'TINGGI';
+
+            return { sisaHari, prioritas };
+        };
+
+        // Load Data (Real-time Firebase)
+        const loadDataFromFirebase = () => {
+            if (!auth.currentUser || !loggedInUser) return;
+            
+            loadingIndicator.style.display = 'block';
+            
+            let path;
+            if (useCanvasConfig) {
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                path = `artifacts/${appId}/users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
+            } else {
+                path = `users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
+            }
+
+            const colRef = collection(db, path);
+            
+            unsubscribeDb = onSnapshot(colRef, (snapshot) => {
+                orders = [];
+                snapshot.forEach(doc => {
+                    orders.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // Urutkan manual di memory (Prioritas: Belum selesai dulu, lalu deadline terdekat)
+                orders.sort((a, b) => {
+                    if (a.status !== b.status) return a.status === 'Belum Selesai' ? -1 : 1;
+                    return new Date(a.deadline) - new Date(b.deadline);
+                });
+
+                renderTable();
+                loadingIndicator.style.display = 'none';
+            }, (error) => {
+                console.error(error);
+                loadingIndicator.innerHTML = '<span class="text-red-500">Gagal memuat data!</span>';
+            });
+        };
+
+        // Tambah Order
+        orderForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!auth.currentUser || !loggedInUser) return;
+
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+            const newOrder = {
+                klien: document.getElementById('klien').value,
+                projek: document.getElementById('projek').value,
+                kategori: document.getElementById('kategori').value,
+                link: document.getElementById('link').value,
+                deadline: document.getElementById('deadline').value,
+                status: 'Belum Selesai',
+                createdAt: new Date().toISOString()
+            };
+
+            try {
+                let path;
+                if (useCanvasConfig) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                    path = `artifacts/${appId}/users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
+                } else {
+                    path = `users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
+                }
+                
+                await addDoc(collection(db, path), newOrder);
+                orderForm.reset();
+                showToast('Pesanan berhasil ditambahkan!');
+            } catch (error) {
+                console.error("Error adding:", error);
+                showToast('Gagal menyimpan pesanan.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Simpan Pesanan';
+            }
+        });
+
+        // Update Status
+        window.toggleStatus = async (id, currentStatus) => {
+            if (!auth.currentUser || !loggedInUser) return;
+            const newStatus = currentStatus === 'Belum Selesai' ? 'Selesai' : 'Belum Selesai';
+            
+            try {
+                let path;
+                if (useCanvasConfig) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                    path = `artifacts/${appId}/users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
+                } else {
+                    path = `users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
+                }
+                
+                const docRef = doc(db, path, id);
+                await updateDoc(docRef, { status: newStatus });
+            } catch (error) {
+                console.error("Update Error:", error);
+                showToast('Gagal mengubah status', 'error');
+            }
+        };
+
+        // Hapus Order
+        window.deleteOrder = async (id) => {
+            if (!auth.currentUser || !loggedInUser) return;
+            // Gunakan custom confirm UI, tapi untuk simpelnya di sini langsung eksekusi karena larangan alert()
+            try {
+                let path;
+                if (useCanvasConfig) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                    path = `artifacts/${appId}/users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
+                } else {
+                    path = `users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
+                }
+                
+                const docRef = doc(db, path, id);
+                await deleteDoc(docRef);
+                showToast('Pesanan dihapus!');
+            } catch (error) {
+                console.error("Delete Error:", error);
+                showToast('Gagal menghapus pesanan', 'error');
+            }
+        };
+
+        // Render Tabel
+        const renderTable = () => {
+            tableBody.innerHTML = '';
+            
+            if (orders.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+
+            orders.forEach((order) => {
+                const stats = calculateStats(order.deadline, order.status);
+                
+                // Style Row
+                let rowBg = 'hover:bg-gray-50';
+                if (order.status === 'Selesai') rowBg = 'bg-green-50 hover:bg-green-100 opacity-60';
+                else if (stats.prioritas === 'TERLAMBAT') rowBg = 'bg-red-50 hover:bg-red-100';
+                else if (stats.prioritas === 'TINGGI') rowBg = 'bg-yellow-50 hover:bg-yellow-100';
+
+                // Badges
+                const prioritasBadge = stats.prioritas === 'TINGGI' 
+                    ? '<span class="px-2 py-1 bg-red-500 text-white text-xs rounded-md font-bold animate-pulse">TINGGI</span>'
+                    : stats.prioritas === 'TERLAMBAT'
+                    ? '<span class="px-2 py-1 bg-gray-800 text-white text-xs rounded-md font-bold">TERLAMBAT</span>'
+                    : stats.prioritas === 'AMAN'
+                    ? '<span class="px-2 py-1 bg-green-500 text-white text-xs rounded-md font-bold">AMAN</span>'
+                    : '<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-md font-bold">NORMAL</span>';
+
+                const statusBtnClass = order.status === 'Selesai' 
+                    ? 'bg-green-500 text-white border-green-500' 
+                    : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100';
+
+                // Teks Sisa Hari
+                let sisaTeks = `${stats.sisaHari} Hari lagi`;
+                if (stats.sisaHari === 0) sisaTeks = "HARI INI!";
+                else if (stats.sisaHari < 0) sisaTeks = `Lewat ${Math.abs(stats.sisaHari)} hari`;
+
+                const tr = document.createElement('tr');
+                tr.className = `border-b border-gray-100 transition duration-150 ${rowBg}`;
+                tr.innerHTML = `
+                    <td class="p-4">
+                        <div class="font-bold text-gray-800">${order.klien}</div>
+                        <div class="text-xs text-gray-500">${order.projek} • ${order.kategori}</div>
+                    </td>
+                    <td class="p-4">
+                        <a href="${order.link}" target="_blank" class="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-3 py-1 rounded-full text-sm font-medium transition">
+                            <i class="fas fa-external-link-alt"></i> Buka Brief
+                        </a>
+                    </td>
+                    <td class="p-4">
+                        <div class="font-medium text-gray-700">${order.deadline}</div>
+                        <div class="text-xs font-bold ${stats.prioritas === 'TINGGI' || stats.prioritas === 'TERLAMBAT' ? 'text-red-500' : 'text-gray-500'}">
+                            ${sisaTeks}
+                        </div>
+                    </td>
+                    <td class="p-4">
+                        <button onclick="toggleStatus('${order.id}', '${order.status}')" class="px-3 py-1 text-sm border rounded-full font-medium transition duration-200 ${statusBtnClass}">
+                            <i class="fas ${order.status === 'Selesai' ? 'fa-check-circle' : 'fa-circle'}"></i> ${order.status}
+                        </button>
+                    </td>
+                    <td class="p-4">${prioritasBadge}</td>
+                    <td class="p-4 text-center">
+                        <button onclick="deleteOrder('${order.id}')" class="text-red-400 hover:text-red-600 transition p-2 rounded-full hover:bg-red-50" title="Hapus Order">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        };
+    </script>
+</body>
+</html>
