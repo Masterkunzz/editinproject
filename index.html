@@ -624,9 +624,9 @@ const playlist = [
             if (useCanvasConfig) {
                 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
                 path = `artifacts/${appId}/users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
-            } else {
-                path = `Data_Orderan/orders_${loggedInUser.username}`;
-            }
+          } else {
+    path = `Data_Orderan/orders_${loggedInUser.username}`;
+}
 
             const colRef = collection(db, path);
             
@@ -675,8 +675,8 @@ const playlist = [
                     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
                     path = `artifacts/${appId}/users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
                 } else {
-                    path = `Data_Orderan/orders_${loggedInUser.username}`;
-                }
+    path = `Data_Orderan/orders_${loggedInUser.username}`;
+}
                 
                 await addDoc(collection(db, path), newOrder);
                 orderForm.reset();
@@ -700,9 +700,9 @@ const playlist = [
                 if (useCanvasConfig) {
                     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
                     path = `artifacts/${appId}/users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
-                } else {
-                    path = `Data_Orderan/orders_${loggedInUser.username}`;
-                }
+               } else {
+    path = `Data_Orderan/orders_${loggedInUser.username}`;
+}
                 
                 const docRef = doc(db, path, id);
                 await updateDoc(docRef, { status: newStatus });
@@ -722,8 +722,8 @@ const playlist = [
                     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
                     path = `artifacts/${appId}/users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
                 } else {
-                    path = `Data_Orderan/orders_${loggedInUser.username}`;
-                }
+    path = `Data_Orderan/orders_${loggedInUser.username}`;
+}
                 
                 const docRef = doc(db, path, id);
                 await deleteDoc(docRef);
