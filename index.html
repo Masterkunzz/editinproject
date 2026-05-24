@@ -13,7 +13,6 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
-        /* Animasi Running Text & Dropdown Topbar */
         .topbar-wrapper {
             position: fixed;
             top: 0;
@@ -42,11 +41,10 @@
             display: inline-block;
             font-weight: 500;
             letter-spacing: 0.5px;
-            /* Animasi akan diinjeksi via JavaScript */
         }
         
         .marquee-container:hover .marquee-content {
-            animation-play-state: paused !important; /* Berhenti kalau di-hover */
+            animation-play-state: paused !important;
         }
 
         @keyframes marquee {
@@ -54,7 +52,6 @@
             100% { transform: translateX(-100%); }
         }
 
-        /* Dropdown Reminder */
         .reminder-dropdown {
             position: absolute;
             top: 0;
@@ -66,18 +63,16 @@
             align-items: center;
             justify-content: center;
             transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-            transform: translateY(-100%); /* Tersembunyi di atas by default */
+            transform: translateY(-100%);
             font-weight: bold;
             color: white;
             z-index: 101;
         }
         
-        /* Padding body agar tidak tertutup topbar */
         body {
             padding-top: 40px; 
         }
 
-        /* Music Button Pulse & Slider */
         .music-playing {
             animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
@@ -86,7 +81,6 @@
             50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
         }
 
-        /* Styling untuk container volume */
         .volume-container {
             position: fixed;
             bottom: 90px;
@@ -112,7 +106,6 @@
             pointer-events: auto;
         }
 
-        /* Style untuk Vertical Range Input */
         input[type=range][orient=vertical] {
             appearance: slider-vertical;
             width: 8px;
@@ -123,9 +116,7 @@
 </head>
 <body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen text-gray-800 font-sans antialiased">
 
-    <!-- Topbar Orchestrator (Quotes, Sholat, Ngopi) -->
     <div class="topbar-wrapper">
-<!-- 1. Running Text (Marquee) -->
         <div id="marquee-container" class="marquee-container">
             <div class="marquee-content" id="marquee-text">
                 🎬 "Editing itu seni kasat mata. Kalau penonton nyadar ada editan, berarti itu buruk." — Walter Murch &nbsp;&nbsp; | &nbsp;&nbsp; 
@@ -137,31 +128,24 @@
             </div>
         </div>
 
-        <!-- 2. Dropdown Reminders (Sholat / Ngopi) -->
         <div id="reminder-dropdown" class="reminder-dropdown">
             <span id="reminder-text"></span>
         </div>
     </div>
 
-    <!-- Notifikasi UI -->
     <div id="toast" class="fixed top-16 right-4 hidden px-6 py-3 rounded-lg shadow-xl z-50 transition-opacity duration-300 font-medium"></div>
 
-    <!-- Music Player System -->
-    <!-- Volume Slider (Vertical) -->
     <div id="volume-container" class="volume-container">
         <input type="range" id="volume-slider" orient="vertical" min="0" max="100" value="50">
     </div>
 
-    <!-- Music Button -->
     <button id="music-btn" class="fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-2xl flex items-center justify-center text-xl z-50 transition-all hover:bg-indigo-700" title="Radio Editin Bang">
         <i id="music-icon" class="fas fa-volume-mute"></i>
     </button>
 
-    <!-- Halaman Login -->
     <div id="login-screen" class="flex items-center justify-center min-h-[calc(100vh-40px)] p-4">
         <div class="glass p-8 rounded-2xl shadow-2xl w-full max-w-md">
             <div class="text-center mb-8">
-                <!-- LOGO EDITIN BANG DI LOGIN -->
                 <img src="logo.png" alt="Logo Editin Bang" class="w-40 h-auto mx-auto mb-4 object-contain" onerror="this.onerror=null; this.src='https://via.placeholder.com/150?text=Editin+Bang';">
                 
                 <h1 class="text-2xl font-bold text-gray-900 mt-2">Workspace Editor</h1>
@@ -185,13 +169,10 @@
         </div>
     </div>
 
-    <!-- Halaman Dashboard -->
     <div id="dashboard-screen" class="hidden p-4 md:p-8 max-w-7xl mx-auto min-h-[calc(100vh-40px)] flex flex-col">
         
-        <!-- Header Dashboard -->
         <div class="glass rounded-2xl p-6 mb-8 flex flex-col md:flex-row justify-between items-center shadow-lg border-l-4 border-l-indigo-600">
             <div class="flex items-center gap-6">
-                <!-- LOGO KECIL DI DASHBOARD -->
                 <img src="logo.png" alt="Logo Editin Bang" class="w-20 h-auto hidden md:block" onerror="this.style.display='none'">
                 <div>
                     <h2 id="greeting-text" class="text-2xl md:text-3xl font-bold text-gray-900">Selamat pagi, Ahmad.</h2>
@@ -206,7 +187,6 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            <!-- Form Input Order -->
             <div class="lg:col-span-1">
                 <div class="glass rounded-2xl p-6 shadow-lg sticky top-16">
                     <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
@@ -246,7 +226,6 @@
                 </div>
             </div>
 
-            <!-- Tabel Order -->
             <div class="lg:col-span-3">
                 <div class="glass rounded-2xl shadow-lg overflow-hidden flex flex-col h-full">
                     <div class="p-4 border-b border-gray-200 bg-white bg-opacity-50 flex justify-between items-center">
@@ -268,7 +247,6 @@
                                 </tr>
                             </thead>
                             <tbody id="table-body" class="bg-white bg-opacity-80">
-                                <!-- Data akan dirender di sini -->
                             </tbody>
                         </table>
                         <div id="empty-state" class="hidden p-8 text-center text-gray-500">
@@ -281,16 +259,11 @@
         </div>
     </div>
 
-    <!-- FIREBASE SETUP & LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-        // ==========================================
-        // 🚨 AREA SETTING FIREBASE (UNTUK NETLIFY NANTI)
-        // ==========================================
-        // Ganti config ini saat deploy ke Netlify
         const userFirebaseConfig = {
     apiKey: "AIzaSyBhip3OqbOkNFJRiFJcmSmeMZOXnx4ZKOU",
     authDomain: "editinbang-dashboard.firebaseapp.com",
@@ -299,7 +272,6 @@
     messagingSenderId: "164888410673",
     appId: "1:164888410673:web:54968f90ed3a8f3b113310"
   };
-        // ==========================================
 
         let app, db, auth;
         const useCanvasConfig = typeof __firebase_config !== 'undefined';
@@ -313,20 +285,17 @@
         db = getFirestore(app);
         auth = getAuth(app);
 
-        // State Aplikasi
         let orders = [];
         let loggedInUser = null;
         let unsubscribeDb = null;
         let isFirebaseReady = false;
 
-        // Akun Editor
         const accounts = {
             'AhmadBafagih': { pass: 'AhmadCEO89', name: 'Ahmad' },
             'EditorSatu': { pass: 'AhmadCEO89', name: 'Villa' },
             'EditorDua': { pass: 'AhmadCEO89', name: 'Ali' }
         };
 
-        // UI Elements
         const loginScreen = document.getElementById('login-screen');
         const dashboardScreen = document.getElementById('dashboard-screen');
         const loginForm = document.getElementById('login-form');
@@ -336,7 +305,6 @@
         const loadingIndicator = document.getElementById('loading-indicator');
         const toast = document.getElementById('toast');
 
-        // Fungsi Toast Notification
         window.showToast = (message, type = 'success') => {
             toast.textContent = message;
             toast.className = `fixed top-16 right-4 px-6 py-3 rounded-lg shadow-xl z-50 transition-opacity duration-300 font-medium text-white ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}`;
@@ -344,104 +312,80 @@
             setTimeout(() => toast.classList.add('hidden'), 3000);
         };
 
-        // ==========================================
-        // LOGIKA ANIMASI TOPBAR (QUOTES -> SHOLAT -> NGOPI)
-        // ==========================================
         const marqueeContent = document.getElementById('marquee-text');
         const marqueeContainer = document.getElementById('marquee-container');
         const reminderDropdown = document.getElementById('reminder-dropdown');
         const reminderText = document.getElementById('reminder-text');
 
         function playTopbarSequence() {
-            // 1. Jalankan Marquee Quotes
             marqueeContainer.style.opacity = '1';
             marqueeContent.style.animation = 'none';
-            void marqueeContent.offsetWidth; // Trigger reflow agar animasi bisa direstart
+            void marqueeContent.offsetWidth; 
             
-            // Atur durasi 45 detik untuk running text
             marqueeContent.style.animation = 'marquee 45s linear forwards';
 
-            // Event listener saat teks selesai berjalan sampai ujung
             marqueeContent.onanimationend = () => {
                 
-                // Sembunyikan container marquee sebentar
                 marqueeContainer.style.opacity = '0';
 
-                // 2. Tampilkan Dropdown Sholat
                 reminderText.innerHTML = '🕌 <span class="text-yellow-300">PENGINGAT: JANGAN LUPA SHOLAT! sholat lebih utama dari orderan!</span>';
-                reminderDropdown.style.transform = 'translateY(0)'; // Turun dari atas
+                reminderDropdown.style.transform = 'translateY(0)'; 
 
                 setTimeout(() => {
-                    // Tarik Dropdown Sholat Ke Atas
                     reminderDropdown.style.transform = 'translateY(-100%)';
 
                     setTimeout(() => {
-                        // 3. Tampilkan Dropdown Ngopi
                         reminderText.innerHTML = '☕ <span class="text-orange-300">jangan lupa ngopi biar enjoyyy.</span>';
-                        reminderDropdown.style.transform = 'translateY(0)'; // Turun dari atas
+                        reminderDropdown.style.transform = 'translateY(0)'; 
 
                         setTimeout(() => {
-                            // Tarik Dropdown Ngopi Ke Atas
                             reminderDropdown.style.transform = 'translateY(-100%)';
 
                             setTimeout(() => {
-                                // LOOPING: Mulai ulang urutan dari awal (Quotes berjalan lagi)
                                 playTopbarSequence();
-                            }, 600); // Waktu tunggu animasi naik selesai
-                        }, 5000); // Durasi ngopi tampil (5 detik)
-                    }, 600); // Waktu tunggu animasi naik selesai
-                }, 5000); // Durasi sholat tampil (5 detik)
+                            }, 600); 
+                        }, 5000); 
+                    }, 600); 
+                }, 5000); 
             };
         }
 
-        // Mulai sequence saat halaman dimuat
         playTopbarSequence();
-        // ==========================================
 
-
-        // ==========================================
-        // LOGIKA RADIO (BACKGROUND MUSIC SYSTEM)
-        // ==========================================
         const musicBtn = document.getElementById('music-btn');
         const musicIcon = document.getElementById('music-icon');
         const volumeContainer = document.getElementById('volume-container');
         const volumeSlider = document.getElementById('volume-slider');
         
         let currentAudio = null;
-        let isAudible = false; // Status apakah suara terdengar oleh user
-        let userVolume = 0.5; // Menyimpan preferensi volume user (default 50%)
+        let isAudible = false; 
+        let userVolume = 0.5; 
         let fadeInterval;
 
 const playlist = [
             'music/track1.mp3'
         ];
 
-        // Mulai Radio secara Bisu (Mute)
         function startRadioSilently() {
             if (currentAudio) return;
 
             const randomTrack = playlist[Math.floor(Math.random() * playlist.length)];
             currentAudio = new Audio(randomTrack);
-            currentAudio.volume = 0; // Selalu mulai dengan volume 0 (mute)
+            currentAudio.volume = 0; 
             
-            // Ketika lagu selesai, putar lagu acak lainnya
             currentAudio.addEventListener('ended', () => {
                 currentAudio = null;
-                startRadioSilently(); // Lanjut lagu berikutnya (tetap mengikuti status isAudible)
+                startRadioSilently(); 
                 if (isAudible && currentAudio) {
-                    currentAudio.volume = userVolume; // Terapkan volume jika mode suara aktif
+                    currentAudio.volume = userVolume; 
                 }
             });
 
-            // Playback sering kali diblokir browser jika tidak ada interaksi user,
-            // jadi kita coba play, jika error biarkan saja (akan diputar saat user klik tombol)
             currentAudio.play().catch(e => console.log("Auto-play diblokir browser, menunggu interaksi user."));
         }
 
-        // Jalankan radio saat dokumen siap
         document.addEventListener('DOMContentLoaded', startRadioSilently);
 
-        // Logika Fade In/Out
         function fadeVolume(targetVolume, duration) {
             clearInterval(fadeInterval);
             const steps = 20;
@@ -452,7 +396,6 @@ const playlist = [
 
             fadeInterval = setInterval(() => {
                 let newVol = currentAudio.volume + stepVolume;
-                // Pastikan volume dalam batas 0 - 1
                 if (newVol < 0) newVol = 0;
                 if (newVol > 1) newVol = 1;
                 
@@ -461,48 +404,41 @@ const playlist = [
                 if ((stepVolume > 0 && currentAudio.volume >= targetVolume) || 
                     (stepVolume < 0 && currentAudio.volume <= targetVolume)) {
                     clearInterval(fadeInterval);
-                    currentAudio.volume = targetVolume; // Setel ke target pasti
+                    currentAudio.volume = targetVolume; 
                 }
             }, stepTime);
         }
 
-        // Interaksi Tombol Speaker
         musicBtn.addEventListener('click', () => {
-            // Jika browser memblokir autoplay sebelumnya, mulai audio sekarang
             if (!currentAudio || currentAudio.paused) {
                  if(!currentAudio) startRadioSilently();
                  currentAudio.play().catch(handleAudioError);
             }
 
             if (isAudible) {
-                // Mode ke Mute (Fade Out)
                 isAudible = false;
                 musicIcon.className = 'fas fa-volume-mute';
                 musicBtn.classList.remove('music-playing');
                 volumeContainer.classList.remove('visible');
-                fadeVolume(0, 500); // Fade out 0.5 detik
+                fadeVolume(0, 500); 
             } else {
-                // Mode Bersuara (Fade In)
                 isAudible = true;
                 musicIcon.className = 'fas fa-volume-up';
                 musicBtn.classList.add('music-playing');
                 volumeContainer.classList.add('visible');
-                // Setel slider ke preferensi user
                 volumeSlider.value = userVolume * 100;
-                fadeVolume(userVolume, 800); // Fade in 0.8 detik
+                fadeVolume(userVolume, 800); 
             }
         });
 
-        // Interaksi Slider Volume
         volumeSlider.addEventListener('input', (e) => {
             const val = e.target.value / 100;
-            userVolume = val; // Simpan preferensi
+            userVolume = val; 
             if (isAudible && currentAudio) {
-                clearInterval(fadeInterval); // Hentikan fade jika sedang berjalan
+                clearInterval(fadeInterval); 
                 currentAudio.volume = userVolume;
             }
             
-            // Ubah ikon berdasarkan volume
             if (val === 0) {
                 musicIcon.className = 'fas fa-volume-off';
             } else if (val < 0.5) {
@@ -520,10 +456,7 @@ const playlist = [
             musicBtn.classList.remove('music-playing');
             volumeContainer.classList.remove('visible');
         }
-        // ==========================================
 
-
-        // Init Firebase Auth (Wajib untuk database)
         const initFirebaseAuth = async () => {
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -546,7 +479,6 @@ const playlist = [
             }
         });
 
-        // Waktu & Sapaan
         const updateGreeting = (name) => {
             const hour = new Date().getHours();
             let timeOfDay = 'malam';
@@ -557,14 +489,12 @@ const playlist = [
             document.getElementById('greeting-text').textContent = `Selamat ${timeOfDay}, ${name}.`;
         };
 
-        // Login Logic
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const userVal = document.getElementById('username').value.trim();
             const passVal = document.getElementById('password').value.trim();
             const errorMsg = document.getElementById('login-error');
 
-            // Coba nyalakan audio silent jika diblokir browser saat load awal
             if(currentAudio && currentAudio.paused) {
                 currentAudio.play().catch(e => console.log("Audio still blocked"));
             }
@@ -585,7 +515,6 @@ const playlist = [
             }
         });
 
-        // Logout
         document.getElementById('logout-btn').addEventListener('click', () => {
             loggedInUser = null;
             if (unsubscribeDb) unsubscribeDb();
@@ -596,7 +525,6 @@ const playlist = [
             document.getElementById('password').value = '';
         });
 
-        // Helper: Hitung Hari & Prioritas
         const calculateStats = (deadline, status) => {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
@@ -614,7 +542,6 @@ const playlist = [
             return { sisaHari, prioritas };
         };
 
-        // Load Data (Real-time Firebase)
         const loadDataFromFirebase = () => {
             if (!auth.currentUser || !loggedInUser) return;
             
@@ -625,7 +552,7 @@ const playlist = [
                 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
                 path = `artifacts/${appId}/users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
           } else {
-    path = `Data_Orderan/orders_${loggedInUser.username}`;
+    path = `orders_${loggedInUser.username}`;
 }
 
             const colRef = collection(db, path);
@@ -636,7 +563,6 @@ const playlist = [
                     orders.push({ id: doc.id, ...doc.data() });
                 });
                 
-                // Urutkan manual di memory (Prioritas: Belum selesai dulu, lalu deadline terdekat)
                 orders.sort((a, b) => {
                     if (a.status !== b.status) return a.status === 'Belum Selesai' ? -1 : 1;
                     return new Date(a.deadline) - new Date(b.deadline);
@@ -650,7 +576,6 @@ const playlist = [
             });
         };
 
-        // Tambah Order
         orderForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             if (!auth.currentUser || !loggedInUser) return;
@@ -675,7 +600,7 @@ const playlist = [
                     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
                     path = `artifacts/${appId}/users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
                 } else {
-    path = `Data_Orderan/orders_${loggedInUser.username}`;
+    path = `orders_${loggedInUser.username}`;
 }
                 
                 await addDoc(collection(db, path), newOrder);
@@ -690,7 +615,6 @@ const playlist = [
             }
         });
 
-        // Update Status
         window.toggleStatus = async (id, currentStatus) => {
             if (!auth.currentUser || !loggedInUser) return;
             const newStatus = currentStatus === 'Belum Selesai' ? 'Selesai' : 'Belum Selesai';
@@ -701,7 +625,7 @@ const playlist = [
                     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
                     path = `artifacts/${appId}/users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
                } else {
-    path = `Data_Orderan/orders_${loggedInUser.username}`;
+    path = `orders_${loggedInUser.username}`;
 }
                 
                 const docRef = doc(db, path, id);
@@ -712,17 +636,15 @@ const playlist = [
             }
         };
 
-        // Hapus Order
         window.deleteOrder = async (id) => {
             if (!auth.currentUser || !loggedInUser) return;
-            // Gunakan custom confirm UI, tapi untuk simpelnya di sini langsung eksekusi karena larangan alert()
             try {
                 let path;
                 if (useCanvasConfig) {
                     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
                     path = `artifacts/${appId}/users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
                 } else {
-    path = `Data_Orderan/orders_${loggedInUser.username}`;
+    path = `orders_${loggedInUser.username}`;
 }
                 
                 const docRef = doc(db, path, id);
@@ -734,7 +656,6 @@ const playlist = [
             }
         };
 
-        // Render Tabel
         const renderTable = () => {
             tableBody.innerHTML = '';
             
@@ -747,13 +668,11 @@ const playlist = [
             orders.forEach((order) => {
                 const stats = calculateStats(order.deadline, order.status);
                 
-                // Style Row
                 let rowBg = 'hover:bg-gray-50';
                 if (order.status === 'Selesai') rowBg = 'bg-green-50 hover:bg-green-100 opacity-60';
                 else if (stats.prioritas === 'TERLAMBAT') rowBg = 'bg-red-50 hover:bg-red-100';
                 else if (stats.prioritas === 'TINGGI') rowBg = 'bg-yellow-50 hover:bg-yellow-100';
 
-                // Badges
                 const prioritasBadge = stats.prioritas === 'TINGGI' 
                     ? '<span class="px-2 py-1 bg-red-500 text-white text-xs rounded-md font-bold animate-pulse">TINGGI</span>'
                     : stats.prioritas === 'TERLAMBAT'
@@ -766,7 +685,6 @@ const playlist = [
                     ? 'bg-green-500 text-white border-green-500' 
                     : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100';
 
-                // Teks Sisa Hari
                 let sisaTeks = `${stats.sisaHari} Hari lagi`;
                 if (stats.sisaHari === 0) sisaTeks = "HARI INI!";
                 else if (stats.sisaHari < 0) sisaTeks = `Lewat ${Math.abs(stats.sisaHari)} hari`;
