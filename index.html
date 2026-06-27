@@ -12,7 +12,6 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        
         .topbar-wrapper {
             position: fixed;
             top: 0;
@@ -26,7 +25,6 @@
             display: flex;
             align-items: center;
         }
-
         .marquee-container {
             width: 100%;
             height: 100%;
@@ -36,22 +34,18 @@
             display: flex;
             align-items: center;
         }
-
         .marquee-content {
             display: inline-block;
             font-weight: 500;
             letter-spacing: 0.5px;
         }
-        
         .marquee-container:hover .marquee-content {
             animation-play-state: paused !important;
         }
-
         @keyframes marquee {
             0% { transform: translateX(100vw); }
             100% { transform: translateX(-100%); }
         }
-
         .reminder-dropdown {
             position: absolute;
             top: 0;
@@ -68,11 +62,7 @@
             color: white;
             z-index: 101;
         }
-        
-        body {
-            padding-top: 40px; 
-        }
-
+        body { padding-top: 40px; }
         .music-playing {
             animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
@@ -80,7 +70,6 @@
             0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
             50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
         }
-
         .volume-container {
             position: fixed;
             bottom: 90px;
@@ -99,23 +88,28 @@
             z-index: 49;
             height: 100px;
         }
-
         .volume-container.visible {
             opacity: 1;
             transform: translateY(0);
             pointer-events: auto;
         }
-
         input[type=range][orient=vertical] {
             appearance: slider-vertical;
             width: 8px;
             height: 100%;
             cursor: pointer;
         }
+
+        /* Status badge colors */
+        .badge-menerima { background:#dbeafe; color:#1d4ed8; }
+        .badge-editing  { background:#fef9c3; color:#92400e; }
+        .badge-finishing{ background:#fce7f3; color:#9d174d; }
+        .badge-selesai  { background:#d1fae5; color:#065f46; }
     </style>
 </head>
 <body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen text-gray-800 font-sans antialiased">
 
+    <!-- Topbar -->
     <div class="topbar-wrapper">
         <div id="marquee-container" class="marquee-container">
             <div class="marquee-content" id="marquee-text">
@@ -127,55 +121,51 @@
                 🖥️ "Render lama? Sabar, karya bagus butuh waktu dan dedikasi." — Editin Bang Team
             </div>
         </div>
-
         <div id="reminder-dropdown" class="reminder-dropdown">
             <span id="reminder-text"></span>
         </div>
     </div>
 
     <div id="toast" class="fixed top-16 right-4 hidden px-6 py-3 rounded-lg shadow-xl z-50 transition-opacity duration-300 font-medium"></div>
-
     <div id="volume-container" class="volume-container">
         <input type="range" id="volume-slider" orient="vertical" min="0" max="100" value="50">
     </div>
-
     <button id="music-btn" class="fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-2xl flex items-center justify-center text-xl z-50 transition-all hover:bg-indigo-700" title="Radio Editin Bang">
         <i id="music-icon" class="fas fa-volume-mute"></i>
     </button>
 
+    <!-- Login Screen -->
     <div id="login-screen" class="flex items-center justify-center min-h-[calc(100vh-40px)] p-4">
         <div class="glass p-8 rounded-2xl shadow-2xl w-full max-w-md">
             <div class="text-center mb-8">
                 <img src="logo.png" alt="Logo Editin Bang" class="w-40 h-auto mx-auto mb-4 object-contain" onerror="this.onerror=null; this.src='https://via.placeholder.com/150?text=Editin+Bang';">
-                
                 <h1 class="text-2xl font-bold text-gray-900 mt-2">Workspace Editor</h1>
                 <p class="text-gray-500 mt-1">Sistem Manajemen Orderan</p>
             </div>
-            
             <form id="login-form" class="space-y-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
-                    <input type="text" id="username" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" placeholder="Masukkan Username" required>
+                    <input type="text" id="username" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="Masukkan Username" required>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <input type="password" id="password" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" placeholder="Masukkan Password" required>
+                    <input type="password" id="password" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="Masukkan Password" required>
                 </div>
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition shadow-lg hover:shadow-xl">
-                    Masuk
-                </button>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition shadow-lg">Masuk</button>
             </form>
             <p id="login-error" class="text-red-500 text-sm text-center mt-4 hidden">Username atau password salah!</p>
         </div>
     </div>
 
+    <!-- Dashboard -->
     <div id="dashboard-screen" class="hidden p-4 md:p-8 max-w-7xl mx-auto min-h-[calc(100vh-40px)] flex flex-col">
         
+        <!-- Header -->
         <div class="glass rounded-2xl p-6 mb-8 flex flex-col md:flex-row justify-between items-center shadow-lg border-l-4 border-l-indigo-600">
             <div class="flex items-center gap-6">
-                <img src="logo.png" alt="Logo Editin Bang" class="w-20 h-auto hidden md:block" onerror="this.style.display='none'">
+                <img src="logo.png" alt="Logo" class="w-20 h-auto hidden md:block" onerror="this.style.display='none'">
                 <div>
-                    <h2 id="greeting-text" class="text-2xl md:text-3xl font-bold text-gray-900">Selamat pagi, Ahmad.</h2>
+                    <h2 id="greeting-text" class="text-2xl md:text-3xl font-bold text-gray-900">Selamat pagi.</h2>
                     <p class="text-gray-600">Udah siap kerjain pesanan?</p>
                 </div>
             </div>
@@ -186,73 +176,36 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            <div class="lg:col-span-1">
-                <div class="glass rounded-2xl p-6 shadow-lg sticky top-16">
-                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
-                        <i class="fas fa-plus-circle text-indigo-500"></i> Pesanan Baru
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 gap-8">
+            <!-- Tabel Pesanan dari Admin -->
+            <div class="glass rounded-2xl shadow-lg overflow-hidden">
+                <div class="p-4 border-b border-gray-200 bg-white bg-opacity-50 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-gray-800">
+                        <i class="fas fa-list-check text-indigo-500 mr-2"></i>Pesanan Masuk
                     </h3>
-                    <form id="order-form" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Klien</label>
-                            <input type="text" id="klien" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Judul Projek</label>
-                            <input type="text" id="projek" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
-                            <select id="kategori" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
-                                <option value="Shorts">Shorts</option>
-                                <option value="Video Panjang">Video Panjang</option>
-                                <option value="Cinematic">Cinematic</option>
-                                <option value="Tiktok Ads">Tiktok Ads</option>
-                                <option value="Lainnya">Lainnya</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Link Brief</label>
-                            <input type="url" id="link" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white" placeholder="https://..." required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Deadline</label>
-                            <input type="date" id="deadline" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white" required>
-                        </div>
-                        <button type="submit" id="submit-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg transition shadow-md flex justify-center items-center gap-2 disabled:opacity-50">
-                            <i class="fas fa-save"></i> Simpan Pesanan
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <div class="lg:col-span-3">
-                <div class="glass rounded-2xl shadow-lg overflow-hidden flex flex-col h-full">
-                    <div class="p-4 border-b border-gray-200 bg-white bg-opacity-50 flex justify-between items-center">
-                        <h3 class="text-lg font-bold text-gray-800">Daftar Antrean</h3>
-                        <div class="text-sm text-gray-500" id="loading-indicator">
-                            <i class="fas fa-spinner fa-spin text-indigo-500"></i> Sinkronisasi Data...
-                        </div>
+                    <div id="loading-indicator" class="text-sm text-gray-500">
+                        <i class="fas fa-spinner fa-spin text-indigo-500"></i> Memuat...
                     </div>
-                    <div class="overflow-x-auto flex-1">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 text-sm">
-                                    <th class="p-4 font-semibold">Klien / Projek</th>
-                                    <th class="p-4 font-semibold">Brief</th>
-                                    <th class="p-4 font-semibold">Deadline & Sisa</th>
-                                    <th class="p-4 font-semibold">Status</th>
-                                    <th class="p-4 font-semibold">Prioritas</th>
-                                    <th class="p-4 font-semibold text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-body" class="bg-white bg-opacity-80">
-                            </tbody>
-                        </table>
-                        <div id="empty-state" class="hidden p-8 text-center text-gray-500">
-                            <i class="fas fa-box-open text-4xl mb-3 text-gray-300"></i>
-                            <p>Belum ada orderan. Santai dulu!</p>
-                        </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 text-sm">
+                                <th class="p-4 font-semibold">No. Pesanan</th>
+                                <th class="p-4 font-semibold">Klien / Produk</th>
+                                <th class="p-4 font-semibold">Deadline</th>
+                                <th class="p-4 font-semibold">Harga</th>
+                                <th class="p-4 font-semibold">Catatan</th>
+                                <th class="p-4 font-semibold">Status / Progres</th>
+                                <th class="p-4 font-semibold text-center">Update Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body" class="bg-white bg-opacity-80"></tbody>
+                    </table>
+                    <div id="empty-state" class="hidden p-8 text-center text-gray-500">
+                        <i class="fas fa-box-open text-4xl mb-3 text-gray-300"></i>
+                        <p>Belum ada pesanan yang masuk. Santai dulu!</p>
                     </div>
                 </div>
             </div>
@@ -260,469 +213,282 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+        import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
 
-        const userFirebaseConfig = {
-    apiKey: "AIzaSyBhip3OqbOkNFJRiFJcmSmeMZOXnx4ZKOU",
-    authDomain: "editinbang-dashboard.firebaseapp.com",
-    projectId: "editinbang-dashboard",
-    storageBucket: "editinbang-dashboard.firebasestorage.app",
-    messagingSenderId: "164888410673",
-    appId: "1:164888410673:web:54968f90ed3a8f3b113310"
-  };
-
-        let app, db, auth;
-        const useCanvasConfig = typeof __firebase_config !== 'undefined';
-
-        if (useCanvasConfig) {
-            app = initializeApp(JSON.parse(__firebase_config));
-        } else {
-            app = initializeApp(userFirebaseConfig); 
-        }
-        
-        db = getFirestore(app);
-        auth = getAuth(app);
-
-        let orders = [];
-        let loggedInUser = null;
-        let unsubscribeDb = null;
-        let isFirebaseReady = false;
-
-        const accounts = {
-            'AhmadBafagih': { pass: 'AhmadCEO89', name: 'Ahmad' },
-            'EditorSatu': { pass: 'AhmadCEO89', name: 'Villa' },
-            'EditorTiga': { pass: 'AhmadCEO89', name: 'Neo' },
-            'EditorDua': { pass: 'AhmadCEO89', name: 'Fauzan' }
+        // ============================================================
+        // FIREBASE CONFIG — Realtime Database (sama dengan admin.html)
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyC5KIQvwLtVpSCZo9eIFbvMVAxLuKvI-y0",
+            authDomain: "editintrack.firebaseapp.com",
+            databaseURL: "https://editintrack-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "editintrack",
+            storageBucket: "editintrack.firebasestorage.app",
+            messagingSenderId: "141841901436",
+            appId: "1:141841901436:web:752078e47fb168b03be6f9"
         };
 
-        const loginScreen = document.getElementById('login-screen');
-        const dashboardScreen = document.getElementById('dashboard-screen');
-        const loginForm = document.getElementById('login-form');
-        const orderForm = document.getElementById('order-form');
-        const tableBody = document.getElementById('table-body');
-        const emptyState = document.getElementById('empty-state');
-        const loadingIndicator = document.getElementById('loading-indicator');
-        const toast = document.getElementById('toast');
+        const app = initializeApp(firebaseConfig);
+        const db  = getDatabase(app);
 
-        window.showToast = (message, type = 'success') => {
-            toast.textContent = message;
+        // ============================================================
+        // AKUN EDITOR — key harus sama dengan nilai field "editor"
+        // yang diinput admin di admin.html
+        // ============================================================
+        const accounts = {
+            'AhmadBafagih': { pass: 'AhmadCEO89',  name: 'Ahmad',  editorKey: 'Ahmad'  },
+            'EditorSatu'  : { pass: 'AhmadCEO89',  name: 'Villa',  editorKey: 'Villa'  },
+            'EditorDua'   : { pass: 'AhmadCEO89',  name: 'Fauzan', editorKey: 'Fauzan' },
+            'EditorTiga'  : { pass: 'AhmadCEO89',  name: 'Neo',    editorKey: 'Neo'    },
+        };
+
+        let loggedInUser = null;
+
+        // DOM refs
+        const loginScreen      = document.getElementById('login-screen');
+        const dashboardScreen  = document.getElementById('dashboard-screen');
+        const loginForm        = document.getElementById('login-form');
+        const tableBody        = document.getElementById('table-body');
+        const emptyState       = document.getElementById('empty-state');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const toast            = document.getElementById('toast');
+
+        // Toast helper
+        window.showToast = (msg, type = 'success') => {
+            toast.textContent = msg;
             toast.className = `fixed top-16 right-4 px-6 py-3 rounded-lg shadow-xl z-50 transition-opacity duration-300 font-medium text-white ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}`;
             toast.classList.remove('hidden');
             setTimeout(() => toast.classList.add('hidden'), 3000);
         };
 
-        const marqueeContent = document.getElementById('marquee-text');
+        // Greeting
+        const updateGreeting = (name) => {
+            const h = new Date().getHours();
+            let tod = h >= 4 && h < 11 ? 'pagi' : h < 15 ? 'siang' : h < 18 ? 'sore' : 'malam';
+            document.getElementById('greeting-text').textContent = `Selamat ${tod}, ${name}.`;
+        };
+
+        // Login
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value.trim();
+            const err = document.getElementById('login-error');
+
+            if (accounts[u] && accounts[u].pass === p) {
+                loggedInUser = accounts[u];
+                loginScreen.classList.add('hidden');
+                dashboardScreen.classList.remove('hidden');
+                updateGreeting(loggedInUser.name);
+                loadOrders();
+            } else {
+                err.classList.remove('hidden');
+            }
+        });
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            loggedInUser = null;
+            dashboardScreen.classList.add('hidden');
+            loginScreen.classList.remove('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            tableBody.innerHTML = '';
+        });
+
+        // Load orders milik editor yang login
+        function loadOrders() {
+            const pesananRef = ref(db, 'pesanan');
+            loadingIndicator.style.display = 'flex';
+
+            onValue(pesananRef, (snapshot) => {
+                loadingIndicator.style.display = 'none';
+                tableBody.innerHTML = '';
+
+                if (!snapshot.exists()) {
+                    emptyState.classList.remove('hidden');
+                    return;
+                }
+
+                let orders = [];
+                snapshot.forEach(child => {
+                    const d = child.val();
+                    // Filter: hanya tampilkan pesanan milik editor ini
+                    if (d.editor && d.editor.toLowerCase() === loggedInUser.editorKey.toLowerCase()) {
+                        orders.push(d);
+                    }
+                });
+
+                // Sort: belum selesai dulu, lalu by nomor
+                orders.sort((a, b) => {
+                    if (a.status === 'selesai' && b.status !== 'selesai') return 1;
+                    if (a.status !== 'selesai' && b.status === 'selesai') return -1;
+                    return a.nomor_pesanan > b.nomor_pesanan ? 1 : -1;
+                });
+
+                if (orders.length === 0) {
+                    emptyState.classList.remove('hidden');
+                    return;
+                }
+                emptyState.classList.add('hidden');
+
+                orders.forEach(order => renderRow(order));
+            }, (err) => {
+                loadingIndicator.innerHTML = '<span class="text-red-500">Gagal memuat data!</span>';
+                console.error(err);
+            });
+        }
+
+        function renderRow(order) {
+            const statusMap = {
+                'editor sudah menerima project': { label: 'Menerima Project', badge: 'badge-menerima', progres: 10 },
+                'proses editing'               : { label: 'Proses Editing',   badge: 'badge-editing',  progres: 40 },
+                'finishing'                    : { label: 'Finishing',         badge: 'badge-finishing',progres: 80 },
+                'selesai'                      : { label: 'Selesai',           badge: 'badge-selesai',  progres: 100 },
+            };
+
+            const s = statusMap[order.status] || { label: order.status, badge: 'badge-menerima', progres: 0 };
+
+            let hargaTeks = 'Rp ' + parseInt(order.harga_diskon || 0).toLocaleString('id-ID');
+            if (order.harga_normal) {
+                hargaTeks = `<span style="text-decoration:line-through;color:#9ca3af">Rp ${parseInt(order.harga_normal).toLocaleString('id-ID')}</span> <span class="text-green-600 font-bold">Rp ${parseInt(order.harga_diskon).toLocaleString('id-ID')}</span>`;
+            }
+
+            const rowClass = order.status === 'selesai' ? 'opacity-60 bg-green-50' : '';
+
+            const tr = document.createElement('tr');
+            tr.className = `border-b border-gray-100 transition duration-150 hover:bg-gray-50 ${rowClass}`;
+            tr.innerHTML = `
+                <td class="p-4 font-mono text-sm font-bold text-indigo-700">${order.nomor_pesanan}</td>
+                <td class="p-4">
+                    <div class="font-bold text-gray-800">${order.nama_pemesan}</div>
+                    <div class="text-xs text-gray-500">${order.jenis_produk}</div>
+                </td>
+                <td class="p-4 font-medium text-gray-700">${order.deadline}</td>
+                <td class="p-4 text-sm">${hargaTeks}</td>
+                <td class="p-4 text-sm text-gray-500 max-w-xs">${order.note || '-'}</td>
+                <td class="p-4">
+                    <span class="px-3 py-1 rounded-full text-xs font-bold ${s.badge}">${s.label}</span>
+                    <div class="mt-2 bg-gray-200 rounded-full h-2 w-32">
+                        <div class="h-2 rounded-full bg-indigo-500 transition-all" style="width:${s.progres}%"></div>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">${s.progres}%</div>
+                </td>
+                <td class="p-4 text-center">
+                    <select onchange="updateStatus('${order.nomor_pesanan}', this.value)"
+                        class="text-sm border rounded-lg px-2 py-1 focus:ring-2 focus:ring-indigo-400 outline-none bg-white"
+                        ${order.status === 'selesai' ? 'disabled' : ''}>
+                        <option value="editor sudah menerima project" ${order.status === 'editor sudah menerima project' ? 'selected' : ''}>1. Menerima Project (10%)</option>
+                        <option value="proses editing" ${order.status === 'proses editing' ? 'selected' : ''}>2. Proses Editing (40%)</option>
+                        <option value="finishing" ${order.status === 'finishing' ? 'selected' : ''}>3. Finishing (80%)</option>
+                        <option value="selesai" ${order.status === 'selesai' ? 'selected' : ''}>4. Selesai (100%)</option>
+                    </select>
+                </td>
+            `;
+            tableBody.appendChild(tr);
+        }
+
+        // Update status dari sisi editor
+        window.updateStatus = function(noPesanan, statusBaru) {
+            const progresMap = {
+                'editor sudah menerima project': 10,
+                'proses editing': 40,
+                'finishing': 80,
+                'selesai': 100
+            };
+            update(ref(db, 'pesanan/' + noPesanan), {
+                status: statusBaru,
+                progres: progresMap[statusBaru]
+            }).then(() => showToast('Status berhasil diupdate!'))
+              .catch(() => showToast('Gagal update status', 'error'));
+        };
+
+        // ============================================================
+        // Topbar marquee + reminder
+        // ============================================================
+        const marqueeContent   = document.getElementById('marquee-text');
         const marqueeContainer = document.getElementById('marquee-container');
         const reminderDropdown = document.getElementById('reminder-dropdown');
-        const reminderText = document.getElementById('reminder-text');
+        const reminderText     = document.getElementById('reminder-text');
 
         function playTopbarSequence() {
             marqueeContainer.style.opacity = '1';
             marqueeContent.style.animation = 'none';
-            void marqueeContent.offsetWidth; 
-            
+            void marqueeContent.offsetWidth;
             marqueeContent.style.animation = 'marquee 45s linear forwards';
 
             marqueeContent.onanimationend = () => {
-                
                 marqueeContainer.style.opacity = '0';
-
                 reminderText.innerHTML = '🕌 <span class="text-yellow-300">PENGINGAT: JANGAN LUPA SHOLAT! sholat lebih utama dari orderan!</span>';
-                reminderDropdown.style.transform = 'translateY(0)'; 
-
+                reminderDropdown.style.transform = 'translateY(0)';
                 setTimeout(() => {
                     reminderDropdown.style.transform = 'translateY(-100%)';
-
                     setTimeout(() => {
                         reminderText.innerHTML = '☕ <span class="text-orange-300">jangan lupa ngopi biar enjoyyy.</span>';
-                        reminderDropdown.style.transform = 'translateY(0)'; 
-
+                        reminderDropdown.style.transform = 'translateY(0)';
                         setTimeout(() => {
                             reminderDropdown.style.transform = 'translateY(-100%)';
-
-                            setTimeout(() => {
-                                playTopbarSequence();
-                            }, 600); 
-                        }, 5000); 
-                    }, 600); 
-                }, 5000); 
+                            setTimeout(playTopbarSequence, 600);
+                        }, 5000);
+                    }, 600);
+                }, 5000);
             };
         }
-
         playTopbarSequence();
 
-        const musicBtn = document.getElementById('music-btn');
-        const musicIcon = document.getElementById('music-icon');
+        // ============================================================
+        // Radio / Music
+        // ============================================================
+        const musicBtn      = document.getElementById('music-btn');
+        const musicIcon     = document.getElementById('music-icon');
         const volumeContainer = document.getElementById('volume-container');
-        const volumeSlider = document.getElementById('volume-slider');
-        
-        let currentAudio = null;
-        let isAudible = false; 
-        let userVolume = 0.5; 
-        let fadeInterval;
-
-const playlist = [
-            'music/track1.mp3'
-        ];
+        const volumeSlider  = document.getElementById('volume-slider');
+        let currentAudio = null, isAudible = false, userVolume = 0.5, fadeInterval;
+        const playlist = ['music/track1.mp3'];
 
         function startRadioSilently() {
             if (currentAudio) return;
-
-            const randomTrack = playlist[Math.floor(Math.random() * playlist.length)];
-            currentAudio = new Audio(randomTrack);
-            currentAudio.volume = 0; 
-            
-            currentAudio.addEventListener('ended', () => {
-                currentAudio = null;
-                startRadioSilently(); 
-                if (isAudible && currentAudio) {
-                    currentAudio.volume = userVolume; 
-                }
-            });
-
-            currentAudio.play().catch(e => console.log("Auto-play diblokir browser, menunggu interaksi user."));
+            currentAudio = new Audio(playlist[Math.floor(Math.random() * playlist.length)]);
+            currentAudio.volume = 0;
+            currentAudio.addEventListener('ended', () => { currentAudio = null; startRadioSilently(); });
+            currentAudio.play().catch(() => {});
         }
 
         document.addEventListener('DOMContentLoaded', startRadioSilently);
 
-        function fadeVolume(targetVolume, duration) {
+        function fadeVolume(target, duration) {
             clearInterval(fadeInterval);
-            const steps = 20;
-            const stepTime = duration / steps;
-            if(!currentAudio) return;
-            
-            const stepVolume = (targetVolume - currentAudio.volume) / steps;
-
+            if (!currentAudio) return;
+            const steps = 20, stepTime = duration / steps;
+            const stepVol = (target - currentAudio.volume) / steps;
             fadeInterval = setInterval(() => {
-                let newVol = currentAudio.volume + stepVolume;
-                if (newVol < 0) newVol = 0;
-                if (newVol > 1) newVol = 1;
-                
-                currentAudio.volume = newVol;
-
-                if ((stepVolume > 0 && currentAudio.volume >= targetVolume) || 
-                    (stepVolume < 0 && currentAudio.volume <= targetVolume)) {
-                    clearInterval(fadeInterval);
-                    currentAudio.volume = targetVolume; 
+                let v = Math.min(1, Math.max(0, currentAudio.volume + stepVol));
+                currentAudio.volume = v;
+                if ((stepVol > 0 && v >= target) || (stepVol < 0 && v <= target)) {
+                    clearInterval(fadeInterval); currentAudio.volume = target;
                 }
             }, stepTime);
         }
 
         musicBtn.addEventListener('click', () => {
-            if (!currentAudio || currentAudio.paused) {
-                 if(!currentAudio) startRadioSilently();
-                 currentAudio.play().catch(handleAudioError);
-            }
-
+            if (!currentAudio || currentAudio.paused) { if (!currentAudio) startRadioSilently(); currentAudio.play().catch(() => {}); }
             if (isAudible) {
-                isAudible = false;
-                musicIcon.className = 'fas fa-volume-mute';
-                musicBtn.classList.remove('music-playing');
-                volumeContainer.classList.remove('visible');
-                fadeVolume(0, 500); 
+                isAudible = false; musicIcon.className = 'fas fa-volume-mute';
+                musicBtn.classList.remove('music-playing'); volumeContainer.classList.remove('visible');
+                fadeVolume(0, 500);
             } else {
-                isAudible = true;
-                musicIcon.className = 'fas fa-volume-up';
-                musicBtn.classList.add('music-playing');
-                volumeContainer.classList.add('visible');
-                volumeSlider.value = userVolume * 100;
-                fadeVolume(userVolume, 800); 
+                isAudible = true; musicIcon.className = 'fas fa-volume-up';
+                musicBtn.classList.add('music-playing'); volumeContainer.classList.add('visible');
+                volumeSlider.value = userVolume * 100; fadeVolume(userVolume, 800);
             }
         });
 
         volumeSlider.addEventListener('input', (e) => {
-            const val = e.target.value / 100;
-            userVolume = val; 
-            if (isAudible && currentAudio) {
-                clearInterval(fadeInterval); 
-                currentAudio.volume = userVolume;
-            }
-            
-            if (val === 0) {
-                musicIcon.className = 'fas fa-volume-off';
-            } else if (val < 0.5) {
-                musicIcon.className = 'fas fa-volume-down';
-            } else {
-                musicIcon.className = 'fas fa-volume-up';
-            }
+            userVolume = e.target.value / 100;
+            if (isAudible && currentAudio) { clearInterval(fadeInterval); currentAudio.volume = userVolume; }
+            musicIcon.className = userVolume === 0 ? 'fas fa-volume-off' : userVolume < 0.5 ? 'fas fa-volume-down' : 'fas fa-volume-up';
         });
-
-        function handleAudioError(e) {
-            console.error("Audio Playback Error:", e);
-            showToast("Radio gagal memutar. Pastikan file music/track.mp3 tersedia.", "error");
-            isAudible = false;
-            musicIcon.className = 'fas fa-volume-mute';
-            musicBtn.classList.remove('music-playing');
-            volumeContainer.classList.remove('visible');
-        }
-
-        const initFirebaseAuth = async () => {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (error) {
-                console.error("Auth Error:", error);
-                showToast("Koneksi Firebase gagal. Cek konfigurasi.", "error");
-            }
-        };
-
-        initFirebaseAuth();
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                isFirebaseReady = true;
-                if (loggedInUser) loadDataFromFirebase();
-            }
-        });
-
-        const updateGreeting = (name) => {
-            const hour = new Date().getHours();
-            let timeOfDay = 'malam';
-            if (hour >= 4 && hour < 11) timeOfDay = 'pagi';
-            else if (hour >= 11 && hour < 15) timeOfDay = 'siang';
-            else if (hour >= 15 && hour < 18) timeOfDay = 'sore';
-            
-            document.getElementById('greeting-text').textContent = `Selamat ${timeOfDay}, ${name}.`;
-        };
-
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const userVal = document.getElementById('username').value.trim();
-            const passVal = document.getElementById('password').value.trim();
-            const errorMsg = document.getElementById('login-error');
-
-            if(currentAudio && currentAudio.paused) {
-                currentAudio.play().catch(e => console.log("Audio still blocked"));
-            }
-
-            if (accounts[userVal] && accounts[userVal].pass === passVal) {
-                loggedInUser = { username: userVal, name: accounts[userVal].name };
-                loginScreen.classList.add('hidden');
-                dashboardScreen.classList.remove('hidden');
-                updateGreeting(loggedInUser.name);
-                
-                if (isFirebaseReady) {
-                    loadDataFromFirebase();
-                } else {
-                    loadingIndicator.innerHTML = '<i class="fas fa-spinner fa-spin text-indigo-500"></i> Menghubungkan ke Database...';
-                }
-            } else {
-                errorMsg.classList.remove('hidden');
-            }
-        });
-
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            loggedInUser = null;
-            if (unsubscribeDb) unsubscribeDb();
-            orders = [];
-            dashboardScreen.classList.add('hidden');
-            loginScreen.classList.remove('hidden');
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-        });
-
-        const calculateStats = (deadline, status) => {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const dlDate = new Date(deadline);
-            dlDate.setHours(0, 0, 0, 0);
-            
-            const diffTime = dlDate - today;
-            const sisaHari = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            let prioritas = 'NORMAL';
-            if (status === 'Selesai') prioritas = 'AMAN';
-            else if (sisaHari < 0) prioritas = 'TERLAMBAT';
-            else if (sisaHari <= 2) prioritas = 'TINGGI';
-
-            return { sisaHari, prioritas };
-        };
-
-        const loadDataFromFirebase = () => {
-            if (!auth.currentUser || !loggedInUser) return;
-            
-            loadingIndicator.style.display = 'block';
-            
-            let path;
-            if (useCanvasConfig) {
-                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-                path = `artifacts/${appId}/users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
-          } else {
-    path = `orders_${loggedInUser.username}`;
-}
-
-            const colRef = collection(db, path);
-            
-            unsubscribeDb = onSnapshot(colRef, (snapshot) => {
-                orders = [];
-                snapshot.forEach(doc => {
-                    orders.push({ id: doc.id, ...doc.data() });
-                });
-                
-                orders.sort((a, b) => {
-                    if (a.status !== b.status) return a.status === 'Belum Selesai' ? -1 : 1;
-                    return new Date(a.deadline) - new Date(b.deadline);
-                });
-
-                renderTable();
-                loadingIndicator.style.display = 'none';
-            }, (error) => {
-                console.error(error);
-                loadingIndicator.innerHTML = '<span class="text-red-500">Gagal memuat data!</span>';
-            });
-        };
-
-        orderForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!auth.currentUser || !loggedInUser) return;
-
-            const btn = document.getElementById('submit-btn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-
-            const newOrder = {
-                klien: document.getElementById('klien').value,
-                projek: document.getElementById('projek').value,
-                kategori: document.getElementById('kategori').value,
-                link: document.getElementById('link').value,
-                deadline: document.getElementById('deadline').value,
-                status: 'Belum Selesai',
-                createdAt: new Date().toISOString()
-            };
-
-            try {
-                let path;
-                if (useCanvasConfig) {
-                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-                    path = `artifacts/${appId}/users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
-                } else {
-    path = `orders_${loggedInUser.username}`;
-}
-                
-                await addDoc(collection(db, path), newOrder);
-                orderForm.reset();
-                showToast('Pesanan berhasil ditambahkan!');
-            } catch (error) {
-                console.error("Error adding:", error);
-                showToast('Gagal menyimpan pesanan.', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save"></i> Simpan Pesanan';
-            }
-        });
-
-        window.toggleStatus = async (id, currentStatus) => {
-            if (!auth.currentUser || !loggedInUser) return;
-            const newStatus = currentStatus === 'Belum Selesai' ? 'Selesai' : 'Belum Selesai';
-            
-            try {
-                let path;
-                if (useCanvasConfig) {
-                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-                    path = `artifacts/${appId}/users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
-               } else {
-    path = `orders_${loggedInUser.username}`;
-}
-                
-                const docRef = doc(db, path, id);
-                await updateDoc(docRef, { status: newStatus });
-            } catch (error) {
-                console.error("Update Error:", error);
-                showToast('Gagal mengubah status', 'error');
-            }
-        };
-
-        window.deleteOrder = async (id) => {
-            if (!auth.currentUser || !loggedInUser) return;
-            try {
-                let path;
-                if (useCanvasConfig) {
-                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-                    path = `artifacts/${appId}/users/${auth.currentUser.uid}/orders_${loggedInUser.username}`;
-                } else {
-    path = `orders_${loggedInUser.username}`;
-}
-                
-                const docRef = doc(db, path, id);
-                await deleteDoc(docRef);
-                showToast('Pesanan dihapus!');
-            } catch (error) {
-                console.error("Delete Error:", error);
-                showToast('Gagal menghapus pesanan', 'error');
-            }
-        };
-
-        const renderTable = () => {
-            tableBody.innerHTML = '';
-            
-            if (orders.length === 0) {
-                emptyState.classList.remove('hidden');
-                return;
-            }
-            emptyState.classList.add('hidden');
-
-            orders.forEach((order) => {
-                const stats = calculateStats(order.deadline, order.status);
-                
-                let rowBg = 'hover:bg-gray-50';
-                if (order.status === 'Selesai') rowBg = 'bg-green-50 hover:bg-green-100 opacity-60';
-                else if (stats.prioritas === 'TERLAMBAT') rowBg = 'bg-red-50 hover:bg-red-100';
-                else if (stats.prioritas === 'TINGGI') rowBg = 'bg-yellow-50 hover:bg-yellow-100';
-
-                const prioritasBadge = stats.prioritas === 'TINGGI' 
-                    ? '<span class="px-2 py-1 bg-red-500 text-white text-xs rounded-md font-bold animate-pulse">TINGGI</span>'
-                    : stats.prioritas === 'TERLAMBAT'
-                    ? '<span class="px-2 py-1 bg-gray-800 text-white text-xs rounded-md font-bold">TERLAMBAT</span>'
-                    : stats.prioritas === 'AMAN'
-                    ? '<span class="px-2 py-1 bg-green-500 text-white text-xs rounded-md font-bold">AMAN</span>'
-                    : '<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-md font-bold">NORMAL</span>';
-
-                const statusBtnClass = order.status === 'Selesai' 
-                    ? 'bg-green-500 text-white border-green-500' 
-                    : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100';
-
-                let sisaTeks = `${stats.sisaHari} Hari lagi`;
-                if (stats.sisaHari === 0) sisaTeks = "HARI INI!";
-                else if (stats.sisaHari < 0) sisaTeks = `Lewat ${Math.abs(stats.sisaHari)} hari`;
-
-                const tr = document.createElement('tr');
-                tr.className = `border-b border-gray-100 transition duration-150 ${rowBg}`;
-                tr.innerHTML = `
-                    <td class="p-4">
-                        <div class="font-bold text-gray-800">${order.klien}</div>
-                        <div class="text-xs text-gray-500">${order.projek} • ${order.kategori}</div>
-                    </td>
-                    <td class="p-4">
-                        <a href="${order.link}" target="_blank" class="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-3 py-1 rounded-full text-sm font-medium transition">
-                            <i class="fas fa-external-link-alt"></i> Buka Brief
-                        </a>
-                    </td>
-                    <td class="p-4">
-                        <div class="font-medium text-gray-700">${order.deadline}</div>
-                        <div class="text-xs font-bold ${stats.prioritas === 'TINGGI' || stats.prioritas === 'TERLAMBAT' ? 'text-red-500' : 'text-gray-500'}">
-                            ${sisaTeks}
-                        </div>
-                    </td>
-                    <td class="p-4">
-                        <button onclick="toggleStatus('${order.id}', '${order.status}')" class="px-3 py-1 text-sm border rounded-full font-medium transition duration-200 ${statusBtnClass}">
-                            <i class="fas ${order.status === 'Selesai' ? 'fa-check-circle' : 'fa-circle'}"></i> ${order.status}
-                        </button>
-                    </td>
-                    <td class="p-4">${prioritasBadge}</td>
-                    <td class="p-4 text-center">
-                        <button onclick="deleteOrder('${order.id}')" class="text-red-400 hover:text-red-600 transition p-2 rounded-full hover:bg-red-50" title="Hapus Order">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </td>
-                `;
-                tableBody.appendChild(tr);
-            });
-        };
     </script>
 </body>
 </html>
