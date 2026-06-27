@@ -410,14 +410,23 @@
                     <div class="text-xs text-gray-400 mt-1">${s.progres}%</div>
                 </td>
                 <td class="p-4 text-center">
+                    ${order.status === 'selesai' ? `
+                    <div class="flex flex-col items-center gap-1">
+                        <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-md font-bold">✅ Selesai</span>
+                        <button onclick="redoStatus('${order.nomor_pesanan}')"
+                            class="text-xs text-orange-500 hover:text-orange-700 underline mt-1 flex items-center gap-1">
+                            <i class="fas fa-rotate-left"></i> Redo Progress
+                        </button>
+                    </div>
+                    ` : `
                     <select onchange="updateStatus('${order.nomor_pesanan}', this.value)"
-                        class="text-sm border rounded-lg px-2 py-1 focus:ring-2 focus:ring-indigo-400 outline-none bg-white"
-                        ${order.status === 'selesai' ? 'disabled' : ''}>
+                        class="text-sm border rounded-lg px-2 py-1 focus:ring-2 focus:ring-indigo-400 outline-none bg-white">
                         <option value="editor sudah menerima project" ${order.status === 'editor sudah menerima project' ? 'selected' : ''}>1. Menerima Project (10%)</option>
                         <option value="proses editing" ${order.status === 'proses editing' ? 'selected' : ''}>2. Proses Editing (40%)</option>
                         <option value="finishing" ${order.status === 'finishing' ? 'selected' : ''}>3. Finishing (80%)</option>
                         <option value="selesai" ${order.status === 'selesai' ? 'selected' : ''}>4. Selesai (100%)</option>
                     </select>
+                    `}
                 </td>
             `;
             tableBody.appendChild(tr);
@@ -436,6 +445,16 @@
                 progres: progresMap[statusBaru]
             }).then(() => showToast('Status berhasil diupdate!'))
               .catch(() => showToast('Gagal update status', 'error'));
+        };
+
+        // Redo: kembalikan pesanan selesai ke finishing
+        window.redoStatus = function(noPesanan) {
+            if (!confirm('Yakin mau kembalikan pesanan ini ke tahap Finishing?\nProgress akan di-reset ke 80%.')) return;
+            update(ref(db, 'pesanan/' + noPesanan), {
+                status: 'finishing',
+                progres: 80
+            }).then(() => showToast('Pesanan dikembalikan ke Finishing.'))
+              .catch(() => showToast('Gagal redo status', 'error'));
         };
 
         // ============================================================
