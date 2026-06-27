@@ -195,7 +195,7 @@
                                 <th class="p-4 font-semibold">No. Pesanan</th>
                                 <th class="p-4 font-semibold">Klien / Produk</th>
                                 <th class="p-4 font-semibold">Deadline & Sisa</th>
-                                <th class="p-4 font-semibold">Catatan</th>
+                                <th class="p-4 font-semibold">Brief</th>
                                 <th class="p-4 font-semibold">Status / Progres</th>
                                 <th class="p-4 font-semibold text-center">Update Status</th>
                             </tr>
@@ -401,7 +401,12 @@
                     <div class="text-xs mt-1 ${sisaWarna}">${u.sisaTeks}</div>
                     <div class="mt-1">${prioritasBadge}</div>
                 </td>
-                <td class="p-4 text-sm text-gray-500 max-w-xs">${order.note || '-'}</td>
+                <td class="p-4 text-sm text-gray-500 max-w-xs">${order.link_brief
+                    ? `<a href="${order.link_brief}" target="_blank" class="inline-flex items-center gap-1 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-2 rounded-lg text-sm font-semibold transition">
+                        <i class="fas fa-external-link-alt"></i> Buka Brief
+                       </a>`
+                    : `<span class="text-gray-300 text-xs">Belum ada brief</span>`
+                }</td>
                 <td class="p-4">
                     <span class="px-3 py-1 rounded-full text-xs font-bold ${s.badge}">${s.label}</span>
                     <div class="mt-2 bg-gray-200 rounded-full h-2 w-32">
