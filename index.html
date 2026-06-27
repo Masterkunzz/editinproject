@@ -194,8 +194,7 @@
                             <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 text-sm">
                                 <th class="p-4 font-semibold">No. Pesanan</th>
                                 <th class="p-4 font-semibold">Klien / Produk</th>
-                                <th class="p-4 font-semibold">Deadline</th>
-                                <th class="p-4 font-semibold">Harga</th>
+                                <th class="p-4 font-semibold">Deadline & Sisa</th>
                                 <th class="p-4 font-semibold">Catatan</th>
                                 <th class="p-4 font-semibold">Status / Progres</th>
                                 <th class="p-4 font-semibold text-center">Update Status</th>
@@ -320,11 +319,13 @@
                     }
                 });
 
-                // Sort: belum selesai dulu, lalu by nomor
+                // Sort: selesai ke bawah, sisanya urut deadline terdekat dulu
                 orders.sort((a, b) => {
-                    if (a.status === 'selesai' && b.status !== 'selesai') return 1;
-                    if (a.status !== 'selesai' && b.status === 'selesai') return -1;
-                    return a.nomor_pesanan > b.nomor_pesanan ? 1 : -1;
+                    const aSelesai = a.status === 'selesai';
+                    const bSelesai = b.status === 'selesai';
+                    if (aSelesai && !bSelesai) return 1;
+                    if (!aSelesai && bSelesai) return -1;
+                    return new Date(a.deadline) - new Date(b.deadline);
                 });
 
                 if (orders.length === 0) {
@@ -340,6 +341,20 @@
             });
         }
 
+        function calcUrgency(deadline, status) {
+            if (status === 'selesai') return { sisaTeks: '—', prioritas: 'AMAN', sisaHari: 999 };
+            const today = new Date(); today.setHours(0,0,0,0);
+            const dl = new Date(deadline); dl.setHours(0,0,0,0);
+            const sisaHari = Math.ceil((dl - today) / (1000*60*60*24));
+            let sisaTeks = `${sisaHari} hari lagi`;
+            if (sisaHari === 0) sisaTeks = 'HARI INI!';
+            else if (sisaHari < 0) sisaTeks = `Lewat ${Math.abs(sisaHari)} hari`;
+            let prioritas = 'NORMAL';
+            if (sisaHari < 0) prioritas = 'TERLAMBAT';
+            else if (sisaHari <= 2) prioritas = 'TINGGI';
+            return { sisaTeks, prioritas, sisaHari };
+        }
+
         function renderRow(order) {
             const statusMap = {
                 'editor sudah menerima project': { label: 'Menerima Project', badge: 'badge-menerima', progres: 10 },
@@ -349,24 +364,43 @@
             };
 
             const s = statusMap[order.status] || { label: order.status, badge: 'badge-menerima', progres: 0 };
+            const u = calcUrgency(order.deadline, order.status);
 
-            let hargaTeks = 'Rp ' + parseInt(order.harga_diskon || 0).toLocaleString('id-ID');
-            if (order.harga_normal) {
-                hargaTeks = `<span style="text-decoration:line-through;color:#9ca3af">Rp ${parseInt(order.harga_normal).toLocaleString('id-ID')}</span> <span class="text-green-600 font-bold">Rp ${parseInt(order.harga_diskon).toLocaleString('id-ID')}</span>`;
-            }
+            // Row background berdasarkan urgency
+            let rowClass = 'hover:bg-gray-50';
+            if (order.status === 'selesai')      rowClass = 'opacity-60 bg-green-50 hover:bg-green-100';
+            else if (u.prioritas === 'TERLAMBAT') rowClass = 'bg-red-50 hover:bg-red-100';
+            else if (u.prioritas === 'TINGGI')    rowClass = 'bg-yellow-50 hover:bg-yellow-100';
 
-            const rowClass = order.status === 'selesai' ? 'opacity-60 bg-green-50' : '';
+            // Badge prioritas
+            const prioritasBadge = {
+                'TINGGI'    : '<span class="px-2 py-1 bg-red-500 text-white text-xs rounded-md font-bold animate-pulse">⚠️ TINGGI</span>',
+                'TERLAMBAT' : '<span class="px-2 py-1 bg-gray-800 text-white text-xs rounded-md font-bold">🚨 TERLAMBAT</span>',
+                'AMAN'      : '<span class="px-2 py-1 bg-green-500 text-white text-xs rounded-md font-bold">✅ AMAN</span>',
+                'NORMAL'    : '<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-md font-bold">🟢 NORMAL</span>',
+            }[u.prioritas];
+
+            // Warna teks sisa hari
+            const sisaWarna = (u.prioritas === 'TINGGI' || u.prioritas === 'TERLAMBAT') ? 'text-red-600 font-bold' : 'text-gray-500';
+
+            // Format tanggal deadline jadi lebih rapi
+            const dlFormatted = order.deadline
+                ? new Date(order.deadline + 'T00:00:00').toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' })
+                : order.deadline;
 
             const tr = document.createElement('tr');
-            tr.className = `border-b border-gray-100 transition duration-150 hover:bg-gray-50 ${rowClass}`;
+            tr.className = `border-b border-gray-100 transition duration-150 ${rowClass}`;
             tr.innerHTML = `
                 <td class="p-4 font-mono text-sm font-bold text-indigo-700">${order.nomor_pesanan}</td>
                 <td class="p-4">
                     <div class="font-bold text-gray-800">${order.nama_pemesan}</div>
                     <div class="text-xs text-gray-500">${order.jenis_produk}</div>
                 </td>
-                <td class="p-4 font-medium text-gray-700">${order.deadline}</td>
-                <td class="p-4 text-sm">${hargaTeks}</td>
+                <td class="p-4">
+                    <div class="font-medium text-gray-700">${dlFormatted}</div>
+                    <div class="text-xs mt-1 ${sisaWarna}">${u.sisaTeks}</div>
+                    <div class="mt-1">${prioritasBadge}</div>
+                </td>
                 <td class="p-4 text-sm text-gray-500 max-w-xs">${order.note || '-'}</td>
                 <td class="p-4">
                     <span class="px-3 py-1 rounded-full text-xs font-bold ${s.badge}">${s.label}</span>
